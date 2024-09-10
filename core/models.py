@@ -126,6 +126,7 @@ create event detail view
 prepare axios and test api calls
 
 
+
 configure jwt for auth with djoser
 
 create ticket model and migrate
