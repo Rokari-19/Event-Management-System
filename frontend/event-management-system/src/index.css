@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.reactCard {
+  border: 1px solid hsl(0, 0%, 80%);
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px hsl(0, 0%, 0%);
+  padding: 25px;
+  text-align: left;
+  margin: 10px; 
+  display: inline-block;
+  max-width: 250px;
+}
+
+.card, .cardImage {
+  max-width: 60%;
+  border-radius: 10%;
+  margin-bottom: 10px;
+}
+
+.card, .cardTitle {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  color: hsl(0, 0%, 20%);
+}
+
+.card, .cardText {
+   font-family: Arial, Helvetica, sans-serif;
+   color: hsl(0, 0%, 30%);
+}
+

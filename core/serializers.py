@@ -4,6 +4,7 @@ from .models import Event, Organizer
 
 
 class EventSerializer(serializers.ModelSerializer):
+    organizer = serializers.CharField(source='organizer.org_name', read_only=True)
     class Meta:
         model = Event
         fields = (
@@ -16,10 +17,10 @@ class EventSerializer(serializers.ModelSerializer):
             'event_status',
             'start_time',
             'end_time',
-            'event_img',
-            'event_thumb',
             'organizer',
             'get_absolute_url',
+            'get_event_img',
+            'get_event_thumb'
         )
 
 class OrganizerSerializer(serializers.ModelSerializer):

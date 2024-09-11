@@ -116,6 +116,8 @@ setup first view for seeing all events.
 create organizer views
 create organizer
 create user roles
+prepare axios and test api calls
+reset cors allowed origins
 fix new bugs
 '''
 
@@ -123,7 +125,7 @@ fix new bugs
 '''
 setup for postgresdb
 create event detail view
-prepare axios and test api calls
+
 
 
 

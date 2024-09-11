@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
+from rest_framework import status
 
 # Create your views here.
 class AllEvents(APIView):
@@ -14,6 +15,18 @@ class AllEvents(APIView):
 
         return Response(serializer.data)
     
+
+class NewEvent(APIView):
+     def post(self, request, format=None):
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+             serializer.save()
+             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+
+
+
 class OrganizerEventsList(generics.ListAPIView):
     serializer_class = EventSerializer
 
