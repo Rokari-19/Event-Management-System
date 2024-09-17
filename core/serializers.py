@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Event, Organizer
+from .models import Event, Organizer, Attendee
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -29,3 +29,9 @@ class OrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organizer
         fields = ['id', 'username', 'org_name', 'email']
+        
+        
+class AttendeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendee
+        fields = ['username', 'email', 'phone_number', 'address', 'password']

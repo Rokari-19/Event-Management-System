@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from io import BytesIO
 from PIL import Image
 from django.core.files import File
@@ -100,11 +100,38 @@ class Event(models.Model):
 
         super().save(*args, **kwargs)
 
+class Attendee(AbstractUser):
+    phone_number = models.IntegerField( blank=True, null=True)
+    email = models.EmailField(('Email Address'), max_length=30, blank=True, null=True)
+    
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='attendee_user_set',  # Custom related_name to avoid clash with auth.User.groups
+        blank=True,
+        help_text='The groups this user belongs to.'
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='attendee_user_permissions',  # Custom related_name to avoid clash with auth.User.user_permissions
+        blank=True,
+        help_text='Specific permissions for this user.'
+    )
+    
+    def __str__(self) -> str:
+        return self.username
+
 
 
 
 class Ticket(models.Model):
-    pass
+    ticket_name = models.CharField(max_length=50, blank=True, null=True)
+    ticket_event = models.ForeignKey(Event, related_name='tickets', on_delete=models.CASCADE, blank=True, null=True)
+    ticket_owner = models.ForeignKey(Attendee, related_name='tickets', on_delete=models.CASCADE, blank=True, null=True)
+    date_purchased = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    ticket_number = models.IntegerField( blank=True, null=True)
+    
+    def __str__(self) -> str:
+        return f'Ticket #{self.ticket_number} for {self.ticket_event}'
 
 
 # done:
