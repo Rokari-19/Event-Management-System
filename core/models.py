@@ -1,5 +1,9 @@
 from django.db import models
+<<<<<<< HEAD
 from django.contrib.auth.models import User, AbstractBaseUser
+=======
+from django.contrib.auth.models import User, AbstractUser
+>>>>>>> afff2532f7107f207a82a35595431094af3fb033
 from io import BytesIO
 from PIL import Image
 from django.core.files import File
@@ -19,7 +23,25 @@ class Organizer(models.Model):
     def __str__(self) -> str:
         return self.user.username
 
-
+class Attendee(AbstractUser):
+    phone_number = models.IntegerField( blank=True, null=True)
+    email = models.EmailField(('Email Address'), max_length=30, blank=True, null=True)
+    
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='attendee_user_set',  # Custom related_name to avoid clash with auth.User.groups
+        blank=True,
+        help_text='The groups this user belongs to.'
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='attendee_user_permissions',  # Custom related_name to avoid clash with auth.User.user_permissions
+        blank=True,
+        help_text='Specific permissions for this user.'
+    )
+    
+    def __str__(self) -> str:
+        return self.username
 
 
 # Events data model
@@ -104,8 +126,17 @@ class Event(models.Model):
 
 
 
+
+
 class Ticket(models.Model):
-    pass
+    ticket_name = models.CharField(max_length=50, blank=True, null=True)
+    ticket_event = models.ForeignKey(Event, related_name='tickets', on_delete=models.CASCADE, blank=True, null=True)
+    ticket_owner = models.ForeignKey(Attendee, related_name='tickets', on_delete=models.CASCADE, blank=True, null=True)
+    date_purchased = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    ticket_number = models.IntegerField( blank=True, null=True)
+    
+    def __str__(self) -> str:
+        return f'Ticket #{self.ticket_number} for {self.ticket_event}'
 
 
 # done:
@@ -117,17 +148,19 @@ setup first view for seeing all events.
 create organizer views
 create organizer
 create user roles
+prepare axios and test api calls
+reset cors allowed origins
 fix new bugs
+create ticket model and migrate
 '''
 
 # todo 
 '''
 setup for postgresdb
 create event detail view
-prepare axios and test api calls
-
-
+wait for djosers to build new auth
 configure jwt for auth with djoser
 
-create ticket model and migrate
+
+
 '''
