@@ -9,21 +9,26 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import environ
 from pathlib import Path
+import datetime
 
+env = environ.Env(
+    DEBUG=(bool,False)
+)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+environ.Env.read_env(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)_k*d)8-l$pta^j+t%_xjlgm!+gfr@4+3bofd1uojmla$v94+l'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -133,6 +138,20 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 MEDIA_URL = '/media/'
+
+JWT_ENCODE_HANDLER = 'jwt_auth.utils.jwt_encode_handler'
+JWT_DECODE_HANDLER = 'jwt_auth.utils.jwt_decode_handler',
+JWT_PAYLOAD_HANDLER = 'jwt_auth.utils.jwt_payload_handler'
+JWT_PAYLOAD_GET_USER_ID_HANDLER = 'jwt_auth.utils.jwt_get_user_id_from_payload_handler'
+JWT_SECRET_KEY: SECRET_KEY
+JWT_ALGORITHM = 'HS256'
+JWT_VERIFY = True
+JWT_VERIFY_EXPIRATION = True
+JWT_LEEWAY = 0
+JWT_EXPIRATION_DELTA = datetime.timedelta(seconds=300)
+JWT_ALLOW_REFRESH = False
+JWT_REFRESH_EXPIRATION_DELTA = datetime.timedelta(days=7)
+JWT_AUTH_HEADER_PREFIX = 'Bearer'
 
 
 # Default primary key field type
