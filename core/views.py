@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-<<<<<<< HEAD
 from django.views.generic import View
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -17,9 +16,7 @@ from .compat import json
 from .forms import JSONWebTokenForm 
 from .mixins import JSONWebTokenAuthMixin  
 
-=======
 from rest_framework import status
->>>>>>> afff2532f7107f207a82a35595431094af3fb033
 
 # Create your views here.
 class AllEvents(APIView):
