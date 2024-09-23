@@ -1,15 +1,17 @@
 from django.shortcuts import render
 from .models import Event, Organizer  
-from .serializers import EventSerializer, OrganizerSerializer
+from .serializers import EventSerializer, OrganizerSerializer, UserSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics
 from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from .models import User
-from .serializers import UserSerializer
+from django.views.generic import View
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.encoding import smart_str  
 
 # from django.views.generic import View
 # from django.core.serializers.json import DjangoJSONEncoder
@@ -21,8 +23,6 @@ from .serializers import UserSerializer
 # from .compat import json
 # from .forms import JSONWebTokenForm 
 # from .mixins import JSONWebTokenAuthMixin  
-
-
 
 # Create your views here.
 class AllEvents(APIView):
@@ -56,19 +56,13 @@ class OrganizerEventsList(generics.ListAPIView):
     def get_queryset(self):
         organizer_name = self.kwargs.get('organizer_name')
         if organizer_name:
-            # Fetch the organizer by their name (assuming unique name or username)
             organizer = Organizer.objects.get(user__username=organizer_name)
-            # Filter events by this organizer
             return Event.objects.filter(organizer=organizer)
         return Event.objects.none()
     
 class OrganizerListView(generics.ListAPIView):
     queryset = Organizer.objects.all()
     serializer_class = OrganizerSerializer
-
-
-
-
 
 
 class SignupView(generics.CreateAPIView):
