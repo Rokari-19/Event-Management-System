@@ -10,8 +10,9 @@ from django.views.generic import View
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.encoding import smart_str  
+from django.shortcuts import get_object_or_404
+# from django.views.decorators.csrf import csrf_exempt
+# from django.utils.encoding import smart_str  
 
 # from django.views.generic import View
 # from django.core.serializers.json import DjangoJSONEncoder
@@ -40,6 +41,15 @@ class NewEvent(APIView):
              serializer.save()
              return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EventDetailView(generics.RetrieveAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+    def get_object(self):
+        event_id = self.kwargs.get('id')
+        return get_object_or_404(Event, id=event_id)
      
 class NewOrganizer(APIView):
     def post(self, request, format=None):

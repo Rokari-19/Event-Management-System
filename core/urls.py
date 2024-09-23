@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import AllEvents, OrganizerEventsList, OrganizerListView
+from .views import AllEvents, OrganizerEventsList, OrganizerListView, EventDetailView
 # from .views import MockView
 
 urlpatterns = [
     path('events/', AllEvents.as_view()),
     path('organizers/<str:organizer_name>/events/', OrganizerEventsList.as_view()), 
     path('organizers/', OrganizerListView.as_view()),
+    path('events/<int:id>/', EventDetailView.as_view(), name='event-detail'),
    
 # =======
 # from .views import *

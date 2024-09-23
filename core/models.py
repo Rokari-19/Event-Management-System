@@ -48,20 +48,22 @@ class User(AbstractUser, PermissionsMixin):
     def tokens(self):
         pass
 
+
 class Attendee(models.Model):
-    # Set a default user ID that exists in your database
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='attendee', default=1)  # Adjust ID as needed
-    phone_number = models.IntegerField(blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='attendee')
+    phone_number = models.CharField(max_length=15, blank=True, null=True)  # Changed to CharField for better format
 
     def __str__(self):
         return self.user.email
+
 
 class Organizer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='organizer')
     org_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.user.email
+        return self.org_name or self.user.email
+
 
 class Event(models.Model):
     CHOICES = (
@@ -81,7 +83,7 @@ class Event(models.Model):
     end_time = models.TimeField(blank=True, null=True)
     event_venue = models.TextField(max_length=120)
     event_status = models.CharField(max_length=50, choices=CHOICES)
-    isCompleted = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)  # Adjusted naming convention
     event_img = models.ImageField(upload_to='event_img/', blank=True, null=True)
     event_thumb = models.ImageField(upload_to='event_thumb/', blank=True, null=True, editable=False)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -93,16 +95,16 @@ class Event(models.Model):
 
     def get_event_thumb(self):
         if self.event_thumb:
-            return "http://127.0.0.1:8000" + self.event_thumb.url
+            return self.event_thumb.url
         elif self.event_img:
             self.event_thumb = self.make_thumbnail(self.event_img)
             self.save()
-            return "http://127.0.0.1:8000" + self.event_thumb.url
+            return self.event_thumb.url
         return ''
 
     def get_event_img(self):
         if self.event_img:
-            return "http://127.0.0.1:8000" + self.event_img.url
+            return self.event_img.url
         return ''
 
     def make_thumbnail(self, image, size=(300, 200)):
@@ -125,15 +127,17 @@ class Event(models.Model):
             self.event_thumb = self.make_thumbnail(self.event_img)
         super().save(*args, **kwargs)
 
+
 class Ticket(models.Model):
     ticket_name = models.CharField(max_length=50, blank=True, null=True)
-    ticket_event = models.ForeignKey(Event, related_name='tickets', on_delete=models.CASCADE, blank=True, null=True)
-    ticket_owner = models.ForeignKey(Attendee, related_name='tickets', on_delete=models.CASCADE, blank=True, null=True)
+    ticket_event = models.ForeignKey(Event, related_name='tickets', on_delete=models.CASCADE)
+    ticket_owner = models.ForeignKey(Attendee, related_name='tickets', on_delete=models.CASCADE)
     date_purchased = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     ticket_number = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f'Ticket #{self.ticket_number} for {self.ticket_event}'
+        return f'Ticket #{self.ticket_number} for {self.ticket_event.event_name}'
+
 
 
 # done:
@@ -149,12 +153,12 @@ prepare axios and test api calls
 reset cors allowed origins
 fix new bugs
 create ticket model and migrate
+create event detail view
 '''
 
 # todo 
 '''
 setup for postgresdb
-create event detail view
 wait for djosers to build new auth
 configure jwt for auth with djoser
 
