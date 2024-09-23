@@ -165,3 +165,11 @@ configure jwt for auth with djoser
 
 
 '''
+
+
+'''
+I have some  issues with some db conflicts, can you please help me check it out.
+that is the reason why i have not been able to setup the postgresql.
+i should be done with this backend by weekend of next weeek.
+Thank you my boss
+'''
