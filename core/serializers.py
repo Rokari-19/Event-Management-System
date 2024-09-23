@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
-from .models import Event, Organizer, Attendee
+from .models import Event, Organizer, Attendee, User
 
+# from rest_framework import serializers
+# from .models import CustomUser
 
 class EventSerializer(serializers.ModelSerializer):
     organizer = serializers.CharField(source='organizer.org_name', read_only=True)
@@ -35,3 +37,16 @@ class AttendeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = ['username', 'email', 'phone_number', 'address', 'password']
+
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(**validated_data)
+        return user

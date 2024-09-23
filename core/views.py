@@ -5,21 +5,24 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-<<<<<<< HEAD
-from django.views.generic import View
-from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.encoding import smart_str  
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import User
+from .serializers import UserSerializer
 
-from .compat import json
-from .forms import JSONWebTokenForm 
-from .mixins import JSONWebTokenAuthMixin  
+# from django.views.generic import View
+# from django.core.serializers.json import DjangoJSONEncoder
+# from django.http import HttpResponse, HttpResponseBadRequest
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.csrf import csrf_exempt
+# from django.utils.encoding import smart_str  
 
-=======
-from rest_framework import status
->>>>>>> afff2532f7107f207a82a35595431094af3fb033
+# from .compat import json
+# from .forms import JSONWebTokenForm 
+# from .mixins import JSONWebTokenAuthMixin  
+
+
 
 # Create your views here.
 class AllEvents(APIView):
@@ -64,51 +67,82 @@ class OrganizerListView(generics.ListAPIView):
     serializer_class = OrganizerSerializer
 
 
-class ObtainJSONWebToken(View):
-    http_method_names = ['post']
-    error_response_dict = {'errors': ['Improperly formatted request']}
-    json_encoder_class = DjangoJSONEncoder
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(ObtainJSONWebToken, self).dispatch(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            request_json = json.loads(smart_str(request.body))  # Replaced smart_text with smart_str
-        except ValueError:
-            return self.render_bad_request_response()
-
-        form = JSONWebTokenForm(request_json)
-
-        if not form.is_valid():
-            return self.render_bad_request_response({'errors': form.errors})
-
-        context_dict = {
-            'token': form.object['token']
-        }
-
-        return self.render_response(context_dict)
-
-    def render_response(self, context_dict):
-        json_context = json.dumps(context_dict, cls=self.json_encoder_class)
-
-        return HttpResponse(json_context, content_type='application/json')
-
-    def render_bad_request_response(self, error_dict=None):
-        if error_dict is None:
-            error_dict = self.error_response_dict
-
-        json_context = json.dumps(error_dict, cls=self.json_encoder_class)
-
-        return HttpResponseBadRequest(
-            json_context, content_type='application/json')
 
 
-obtain_jwt_token = ObtainJSONWebToken.as_view()
 
 
-class MockView(JSONWebTokenAuthMixin, View):
+class SignupView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class LoginView(APIView):
     def post(self, request):
-        data = json.dumps({'username': request.user.username})
-        return HttpResponse(data)
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+        if user:
+            return Response({'token': user.auth_token.key})
+        else:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class UpdateProfileView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        # Implement logic to send password reset email
+        return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
+
+
+
+# class ObtainJSONWebToken(View):
+#     http_method_names = ['post']
+#     error_response_dict = {'errors': ['Improperly formatted request']}
+#     json_encoder_class = DjangoJSONEncoder
+
+#     @method_decorator(csrf_exempt)
+#     def dispatch(self, request, *args, **kwargs):
+#         return super(ObtainJSONWebToken, self).dispatch(request, *args, **kwargs)
+
+#     def post(self, request, *args, **kwargs):
+#         try:
+#             request_json = json.loads(smart_str(request.body))  # Replaced smart_text with smart_str
+#         except ValueError:
+#             return self.render_bad_request_response()
+
+#         form = JSONWebTokenForm(request_json)
+
+#         if not form.is_valid():
+#             return self.render_bad_request_response({'errors': form.errors})
+
+#         context_dict = {
+#             'token': form.object['token']
+#         }
+
+#         return self.render_response(context_dict)
+
+#     def render_response(self, context_dict):
+#         json_context = json.dumps(context_dict, cls=self.json_encoder_class)
+
+#         return HttpResponse(json_context, content_type='application/json')
+
+#     def render_bad_request_response(self, error_dict=None):
+#         if error_dict is None:
+#             error_dict = self.error_response_dict
+
+#         json_context = json.dumps(error_dict, cls=self.json_encoder_class)
+
+#         return HttpResponseBadRequest(
+#             json_context, content_type='application/json')
+
+
+# obtain_jwt_token = ObtainJSONWebToken.as_view()
+
+
+# class MockView(JSONWebTokenAuthMixin, View):
+#     def post(self, request):
+#         data = json.dumps({'username': request.user.username})
+#         return HttpResponse(data)
