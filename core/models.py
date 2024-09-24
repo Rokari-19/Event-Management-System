@@ -95,16 +95,16 @@ class Event(models.Model):
 
     def get_event_thumb(self):
         if self.event_thumb:
-            return self.event_thumb.url
+            return 'http://127.0.0.1:8000' + self.event_thumb.url
         elif self.event_img:
             self.event_thumb = self.make_thumbnail(self.event_img)
             self.save()
-            return self.event_thumb.url
+            return 'http://127.0.0.1:8000' + self.event_thumb.url
         return ''
 
     def get_event_img(self):
         if self.event_img:
-            return self.event_img.url
+            return 'http://127.0.0.1:8000' + self.event_img.url
         return ''
 
     def make_thumbnail(self, image, size=(300, 200)):
