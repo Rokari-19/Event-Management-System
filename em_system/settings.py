@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
 
     # login mamagement
-    'djoser',
+    # 'djoser',
+    # no need for djoser again
 ]
 
 CORS_ALLOWED_ORIGINS = [
