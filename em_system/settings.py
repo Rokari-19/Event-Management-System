@@ -47,6 +47,11 @@ INSTALLED_APPS = [
     # 'djoser',
     # no need for djoser again
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication', 
+    ],
+}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
