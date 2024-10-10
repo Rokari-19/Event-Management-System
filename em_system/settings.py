@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import datetime
 import environ
+from celery import Celery
 
 env = environ.Env(
     DEBUG=(bool,False)
@@ -24,7 +25,12 @@ ALLOWED_HOSTS = [ 'localhost',
   '127.0.0.1',]
 
 
+app = Celery('em_system')
 
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Auto-discover tasks in all installed apps
+app.autodiscover_tasks()
 
 # Application definition
 
@@ -37,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'core',
+    'calendarApp',
     
     # drf apps
     'rest_framework',
@@ -152,6 +159,26 @@ JWT_ALLOW_REFRESH = False
 JWT_REFRESH_EXPIRATION_DELTA = datetime.timedelta(days=7)
 JWT_AUTH_HEADER_PREFIX = 'Bearer'
 
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp_host'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'host_email@example.com'
+EMAIL_HOST_PASSWORD = 'email_password'
+DEFAULT_FROM_EMAIL = 'obedmeshachl@gmail.com'
+
+
+
+
+# Add Celery configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
