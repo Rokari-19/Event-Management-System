@@ -13,21 +13,7 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
-# from django.views.decorators.csrf import csrf_exempt
-# from django.utils.encoding import smart_str  
 
-# from django.views.generic import View
-# from django.core.serializers.json import DjangoJSONEncoder
-# from django.http import HttpResponse, HttpResponseBadRequest
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import csrf_exempt
-# from django.utils.encoding import smart_str  
-
-# from .compat import json
-# from .forms import JSONWebTokenForm 
-# from .mixins import JSONWebTokenAuthMixin  
-
-# Create your views here.
 class AllEvents(APIView):
     def get(self, request, format=None):
         event = Event.objects.all()

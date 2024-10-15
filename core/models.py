@@ -39,7 +39,7 @@ class User(AbstractUser, PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return self.email
+        return self.username
 
     @property
     def get_full_name(self):
