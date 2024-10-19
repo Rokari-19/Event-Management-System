@@ -23,6 +23,7 @@ class EventSerializer(serializers.ModelSerializer):
             'get_absolute_url',
             'get_event_img',
             'get_event_thumb',
+            'location',
         )
 
 class OrganizerSerializer(serializers.ModelSerializer):

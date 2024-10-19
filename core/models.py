@@ -63,7 +63,13 @@ class Organizer(models.Model):
 
     def __str__(self):
         return self.org_name or self.user.email
-
+class CustomDateTimeField(models.DateTimeField):
+    def value_to_string(self, obj):
+        val = self.value_from_object(obj)
+        if val:
+            val.replace(microsecond=0)
+            return val.isoformat()
+        return ''
 
 class Event(models.Model):
     CHOICES = (
@@ -74,6 +80,17 @@ class Event(models.Model):
         ("On-Hold", "on-hold"),
         ("Completed", "completed"),
         ("Stopped", "stopped")
+    )
+    
+    LOCATIONS = (
+        ('Lagos, Nigeria', 'lagos, Nigeria'),
+        ('Calabar, Nigeria', 'Calabar, Nigeria'),
+        ('Abuja, Nigeria', 'Abuja, Nigeria'),
+        ('Abidjan, Cotè d` ivore', 'Abidjan, Cotè d` ivore'),
+        ('Cotè d` ivore', 'Cotè d` ivore'),
+        ('Capetown, SA', 'Capetown, SA'),
+        ('Johanesburg, SA', 'Johanesburg, SA'),
+        ('Accra, Ghana', 'Accra, Ghana')
     )
     event_name = models.CharField(max_length=120)
     event_desc = models.TextField(max_length=300, blank=True, null=True)
@@ -86,7 +103,8 @@ class Event(models.Model):
     is_completed = models.BooleanField(default=False)  # Adjusted naming convention
     event_img = models.ImageField(upload_to='event_img/', blank=True, null=True)
     event_thumb = models.ImageField(upload_to='event_thumb/', blank=True, null=True, editable=False)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = CustomDateTimeField(auto_now_add=True)
+    location = models.CharField(max_length=80, choices=LOCATIONS, blank=True, null=True)
     organizer = models.ForeignKey(Organizer, related_name='events', on_delete=models.CASCADE, blank=True, null=True)
     event_slug = models.SlugField(unique=True, editable=False)
 
