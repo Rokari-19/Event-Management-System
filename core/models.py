@@ -8,6 +8,7 @@ from io import BytesIO
 from .manager import UserManager
 
 class User(AbstractUser, PermissionsMixin):
+    objects = UserManager()
     email = models.EmailField(_('email address'), max_length=300, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -36,7 +37,7 @@ class User(AbstractUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
-    objects = UserManager()
+    
 
     def __str__(self):
         return self.username
@@ -63,6 +64,8 @@ class Organizer(models.Model):
 
     def __str__(self):
         return self.org_name or self.user.email
+    
+    
 class CustomDateTimeField(models.DateTimeField):
     def value_to_string(self, obj):
         val = self.value_from_object(obj)
