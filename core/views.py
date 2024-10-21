@@ -62,6 +62,11 @@ class OrganizerListView(generics.ListAPIView):
     queryset = Organizer.objects.all()
     serializer_class = OrganizerSerializer
 
+# class AllOrganizers(generics.ListAPIView):
+#     def get(self, request, format=None):
+#         queryset = Organizer.objects.all()
+#         serializer = OrganizerSerializer
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class SignupView(generics.CreateAPIView):
     queryset = User.objects.all()
