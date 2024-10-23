@@ -182,9 +182,13 @@ wait for djosers to build new auth - scrapped
 '''
 setup for postgresdb
 configure jwt for auth with djoser
+create log out view
+set up google auth
+properly configure the datetime class,
+for formatting the date and time of events and tickets
 
 
-
+    CLEAN UP CODE MESHACH!!!!!!!!
 '''
 
 

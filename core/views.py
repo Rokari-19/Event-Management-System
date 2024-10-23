@@ -62,12 +62,6 @@ class OrganizerListView(generics.ListAPIView):
     queryset = Organizer.objects.all()
     serializer_class = OrganizerSerializer
 
-# class AllOrganizers(generics.ListAPIView):
-#     def get(self, request, format=None):
-#         queryset = Organizer.objects.all()
-#         serializer = OrganizerSerializer
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
 class SignupView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -96,7 +90,7 @@ class ForgotPasswordView(APIView):
         # Implement logic to send password reset email
         return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
 
-
+'''for use later, incase djoser or simplejwt is needed again'''
 
 # class ObtainJSONWebToken(View):
 #     http_method_names = ['post']
