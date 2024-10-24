@@ -175,16 +175,20 @@ reset cors allowed origins
 fix new bugs
 create ticket model and migrate
 create event detail view
+wait for djosers to build new auth - scrapped
 '''
 
 # todo 
 '''
 setup for postgresdb
-wait for djosers to build new auth
 configure jwt for auth with djoser
+create log out view
+set up google auth
+properly configure the datetime class,
+for formatting the date and time of events and tickets
 
 
-
+    CLEAN UP CODE MESHACH!!!!!!!!
 '''
 
 
@@ -193,4 +197,8 @@ I have some  issues with some db conflicts, can you please help me check it out.
 that is the reason why i have not been able to setup the postgresql.
 i should be done with this backend by weekend of next weeek.
 Thank you my boss
+'''
+
+'''
+fixed it a while ago meshach
 '''

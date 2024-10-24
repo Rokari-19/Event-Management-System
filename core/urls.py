@@ -7,7 +7,7 @@ from .views import (
     LoginView,
     SignupView,
     UpdateProfileView,
-    ForgotPasswordView
+    ForgotPasswordView,
     )
 
 # from .views import MockView
@@ -19,5 +19,6 @@ urlpatterns = [
     path('events/<int:id>/', EventDetailView.as_view(), name='event-detail'),
     path('login/', LoginView.as_view(), name='login'),
     path('signup/', SignupView.as_view(), name='signup'),
+    path('update/', UpdateProfileView.as_view(), name='update'),
     path('reset-password/', ForgotPasswordView.as_view(), name='forgot password'),
 ]
