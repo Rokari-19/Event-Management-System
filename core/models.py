@@ -152,7 +152,7 @@ class Event(models.Model):
 class Ticket(models.Model):
     ticket_name = models.CharField(max_length=50, blank=True, null=True)
     ticket_event = models.ForeignKey(Event, related_name='tickets', on_delete=models.CASCADE)
-    ticket_owner = models.ForeignKey(Attendee, related_name='tickets', on_delete=models.CASCADE)
+    ticket_owner = models.ForeignKey(User, related_name='tickets', on_delete=models.CASCADE)
     date_purchased = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     ticket_number = models.IntegerField(blank=True, null=True)
 

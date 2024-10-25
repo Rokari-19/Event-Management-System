@@ -4,6 +4,11 @@ import datetime
 import environ
 from celery import Celery
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import cloudinary_storage
+
 env = environ.Env(
     DEBUG=(bool,False)
 )
@@ -24,7 +29,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '.vercel.app'
+    '.vercel.app',
   ]
 
 
@@ -44,14 +49,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core.apps.CoreConfig',
 
-    'core',
+    # 'core',
     'calendarApp',
     
     # drf apps
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    
+    # cloud storage apps
+    'cloudinary',
+    'cloudinary_storage'
 
     # login mamagement
     # 'djoser',
@@ -73,6 +83,7 @@ CORS_ALLOWED_ORIGINS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -168,8 +179,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = BASE_DIR / 'media/'
+# for static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    
+# setting up for cloudinary storage
+
+
+# cloudinary.config(
+#     cloud_name = env('CLOUDNAME'),
+#     api_key = env('APIKEY'),
+#     api_secret_key = env('CLOUDSECRET')
+# )
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDNAME'),
+    'API_KEY': env('APIKEY'),
+    'API_SECRET': env('CLOUDSECRET'),
+}
+
+# MEDIA_ROOT = BASE_DIR / 'media/'
 MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 JWT_ENCODE_HANDLER = 'jwt_auth.utils.jwt_encode_handler'
 JWT_DECODE_HANDLER = 'jwt_auth.utils.jwt_decode_handler',
