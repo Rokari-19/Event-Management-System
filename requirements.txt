@@ -22,9 +22,12 @@ djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 djoser==2.2.3
 environ==1.0
+gunicorn==23.0.0
+h11==0.14.0
 idna==3.8
 kombu==5.4.2
 oauthlib==3.2.2
+packaging==24.1
 pillow==10.4.0
 prompt_toolkit==3.0.48
 psycopg2-binary==2.9.9
@@ -40,6 +43,7 @@ social-auth-core==4.5.4
 sqlparse==0.5.1
 tzdata==2024.2
 urllib3==2.2.2
+uvicorn==0.32.0
 vine==5.1.0
 wcwidth==0.2.13
 whitenoise==6.7.0
