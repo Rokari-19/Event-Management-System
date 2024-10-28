@@ -25,6 +25,14 @@ class EventSerializer(serializers.ModelSerializer):
             'get_event_thumb',
             'location',
         )
+        
+class EventImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = (
+            'event_img',
+        )
+        
 
 class OrganizerSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')

@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     
     # cloud storage apps
     'cloudinary',
-    'cloudinary_storage'
+    'cloudinary_storage',
 
     # login mamagement
     # 'djoser',
@@ -183,26 +183,7 @@ STATIC_URL = '/static/'
 # for static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    
-# setting up for cloudinary storage
 
-
-# cloudinary.config(
-#     cloud_name = env('CLOUDNAME'),
-#     api_key = env('APIKEY'),
-#     api_secret_key = env('CLOUDSECRET')
-# )
-
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': env('CLOUDNAME'),
-    'API_KEY': env('APIKEY'),
-    'API_SECRET': env('CLOUDSECRET'),
-}
-
-# MEDIA_ROOT = BASE_DIR / 'media/'
-MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 JWT_ENCODE_HANDLER = 'jwt_auth.utils.jwt_encode_handler'
 JWT_DECODE_HANDLER = 'jwt_auth.utils.jwt_decode_handler',
@@ -243,3 +224,25 @@ CELERY_TIMEZONE = 'UTC'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+    
+# setting up for cloudinary storage
+
+
+cloudinary.config(
+    cloud_name = env('CLOUDNAME'),
+    api_key = env('APIKEY'),
+    api_secret_key = env('CLOUDSECRET')
+)
+
+# MEDIA_URL = env('CLOUDINARY_URL')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDNAME'),
+    'API_KEY': env('APIKEY'),
+    'API_SECRET': env('CLOUDSECRET'),
+    'ALLOWED_FORMATS': ('jpg', 'jpeg', 'png', 'gif', 'pdf'),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+

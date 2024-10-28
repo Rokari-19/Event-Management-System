@@ -6,6 +6,7 @@ from django.core.files import File
 from PIL import Image
 from io import BytesIO
 from .manager import UserManager
+from cloudinary.models import CloudinaryField
 
 class User(AbstractUser, PermissionsMixin):
     objects = UserManager()
@@ -75,6 +76,7 @@ class CustomDateTimeField(models.DateTimeField):
         return ''
 
 class Event(models.Model):
+    root_url = 'http://127.0.0.1:8000'
     CHOICES = (
         ("In Progress", "in progress"),
         ("Canceled", "canceled"),
@@ -104,8 +106,8 @@ class Event(models.Model):
     event_venue = models.TextField(max_length=120)
     event_status = models.CharField(max_length=50, choices=CHOICES)
     is_completed = models.BooleanField(default=False)  # Adjusted naming convention
-    event_img = models.ImageField(upload_to='event_img/', blank=True, null=True)
-    event_thumb = models.ImageField(upload_to='event_thumb/', blank=True, null=True, editable=False)
+    event_img = CloudinaryField('image', blank=True, null=True)
+    event_thumb = CloudinaryField('image', blank=True, null=True, editable=False)
     date_created = CustomDateTimeField(auto_now_add=True)
     location = models.CharField(max_length=80, choices=LOCATIONS, blank=True, null=True)
     organizer = models.ForeignKey(Organizer, related_name='events', on_delete=models.CASCADE, blank=True, null=True)
@@ -116,16 +118,16 @@ class Event(models.Model):
 
     def get_event_thumb(self):
         if self.event_thumb:
-            return 'http://127.0.0.1:8000' + self.event_thumb.url
+            return self.root_url + self.event_thumb.url
         elif self.event_img:
             self.event_thumb = self.make_thumbnail(self.event_img)
             self.save()
-            return 'http://127.0.0.1:8000' + self.event_thumb.url
+            return self.root_url + self.event_thumb.url
         return ''
 
     def get_event_img(self):
         if self.event_img:
-            return 'http://127.0.0.1:8000' + self.event_img.url
+            return self.root_url + self.event_img.url
         return ''
 
     def make_thumbnail(self, image, size=(300, 200)):

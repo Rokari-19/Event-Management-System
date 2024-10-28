@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Event, Organizer  
-from .serializers import EventSerializer, OrganizerSerializer, UserSerializer
+from .serializers import EventSerializer, OrganizerSerializer, UserSerializer, EventImageSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +13,8 @@ from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from cloudinary.uploader import upload_image as upload
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class AllEvents(APIView):
     def get(self, request, format=None):
@@ -22,15 +24,40 @@ class AllEvents(APIView):
         return Response(serializer.data)
     
 
-class NewEvent(APIView):
+class NewEvent(generics.CreateAPIView):
      def post(self, request, format=None):
         serializer = EventSerializer(data=request.data)
         if serializer.is_valid():
              serializer.save()
              return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
+# class UploadEventImage(generics.RetrieveUpdateDestroyAPIView):
+#     parser_class = (MultiPartParser, FormParser)
+#     serializer_class = EventImageSerializer
+#     permission_classes = [IsAuthenticated]
+    
+#     def get_queryset(self):
+#         event = self.request.event
+#         return Event.objects.filter(id=event.id)
+    
+#     def get_object(self):
+#         queryset = self.get_queryset()
+#         obj = get_object_or_404(queryset, id=self.request.event.id)
+#         return obj
+    
+#     def update(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         file = request.data.get('event_img')
+        
+#         if not file:
+#             return Response({'error': 'no image uploaded'}, status.HTTP_400_BAD_REQUEST)
+        
+#         if instance.event_img:
+#             try:
+#                 delete
+        
+        
 class EventDetailView(generics.RetrieveAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
