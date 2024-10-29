@@ -25,6 +25,14 @@ class EventSerializer(serializers.ModelSerializer):
             'get_event_thumb',
             'location',
         )
+        
+class EventImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = (
+            'event_img',
+        )
+        
 
 class OrganizerSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
@@ -49,6 +57,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-    def create(self, validated_data):
+    def create_user(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user

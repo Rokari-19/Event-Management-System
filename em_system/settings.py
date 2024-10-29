@@ -4,6 +4,11 @@ import datetime
 import environ
 from celery import Celery
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import cloudinary_storage
+
 env = environ.Env(
     DEBUG=(bool,False)
 )
@@ -21,8 +26,11 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = [ 'localhost',
-  '127.0.0.1',]
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.vercel.app',
+  ]
 
 
 app = Celery('em_system')
@@ -41,14 +49,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core.apps.CoreConfig',
 
-    'core',
+    # 'core',
     'calendarApp',
     
     # drf apps
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    
+    # cloud storage apps
+    'cloudinary',
+    'cloudinary_storage',
 
     # login mamagement
     # 'djoser',
@@ -70,6 +83,7 @@ CORS_ALLOWED_ORIGINS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -99,15 +113,32 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'em_system.wsgi.application'
+ASGI_APPLICATION = 'em_system.asgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# WSGI_APPLICATION = 'em_system.wsgi.application'
+
+
+'''postgresdb setup for amazon rds'''
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default":{
+        "ENGINE": 'django.db.backends.postgresql_psycopg2',
+        "NAME": env('NAME'),
+        "USER": env('DBUSER'),
+        "PASSWORD": env('PASSWORD'),
+        "HOST": env('HOST'),
+        "PORT": env('PORT')
     }
 }
 
@@ -149,8 +180,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = BASE_DIR / 'media/'
-MEDIA_URL = '/media/'
+# for static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 JWT_ENCODE_HANDLER = 'jwt_auth.utils.jwt_encode_handler'
 JWT_DECODE_HANDLER = 'jwt_auth.utils.jwt_decode_handler',
@@ -191,3 +224,25 @@ CELERY_TIMEZONE = 'UTC'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+    
+# setting up for cloudinary storage
+
+
+cloudinary.config(
+    cloud_name = env('CLOUDNAME'),
+    api_key = env('APIKEY'),
+    api_secret_key = env('CLOUDSECRET')
+)
+
+# MEDIA_URL = env('CLOUDINARY_URL')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDNAME'),
+    'API_KEY': env('APIKEY'),
+    'API_SECRET': env('CLOUDSECRET'),
+    'ALLOWED_FORMATS': ('jpg', 'jpeg', 'png', 'gif', 'pdf'),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
