@@ -1,10 +1,10 @@
 from datetime import timezone
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import CustomUser
 from core.models import Event
 
 class EventTracking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)

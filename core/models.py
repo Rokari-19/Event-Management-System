@@ -1,71 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, PermissionsMixin, Group, Permission
-from django.utils.translation import gettext_lazy as _
+from accounts.models import Organizer, CustomUser
 from django.template.defaultfilters import slugify
 from django.core.files import File
 from PIL import Image
 from io import BytesIO
-from .manager import UserManager
-from cloudinary.models import CloudinaryField
-
-class User(AbstractUser, PermissionsMixin):
-    objects = UserManager()
-    email = models.EmailField(_('email address'), max_length=300, unique=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=False)
-    last_login = models.DateTimeField(null=True, blank=True)
-    is_verified = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
-
-    groups = models.ManyToManyField(
-        Group,
-        related_name='core_user_groups',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name=_('groups'),
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='core_user_permissions',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name=_('user permissions'),
-    )
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
-
-    
-
-    def __str__(self):
-        return self.username
-
-    @property
-    def get_full_name(self):
-        return f'{self.first_name} {self.last_name}'
-
-    def tokens(self):
-        pass
-
-
-class Attendee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='attendee')
-    phone_number = models.CharField(max_length=15, blank=True, null=True)  # Changed to CharField for better format
-
-    def __str__(self):
-        return self.user.email
-
-
-class Organizer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='organizer')
-    org_name = models.CharField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return self.org_name or self.user.email
-    
     
 class CustomDateTimeField(models.DateTimeField):
     def value_to_string(self, obj):
@@ -106,8 +44,8 @@ class Event(models.Model):
     event_venue = models.TextField(max_length=120)
     event_status = models.CharField(max_length=50, choices=CHOICES)
     is_completed = models.BooleanField(default=False)  # Adjusted naming convention
-    event_img = CloudinaryField('image', blank=True, null=True)
-    event_thumb = CloudinaryField('image', blank=True, null=True, editable=False)
+    event_img = models.ImageField(upload_to='image', blank=True, null=True)
+    event_thumb = models.ImageField(upload_to='image', blank=True, null=True, editable=False)
     date_created = CustomDateTimeField(auto_now_add=True)
     location = models.CharField(max_length=80, choices=LOCATIONS, blank=True, null=True)
     organizer = models.ForeignKey(Organizer, related_name='events', on_delete=models.CASCADE, blank=True, null=True)
@@ -154,7 +92,7 @@ class Event(models.Model):
 class Ticket(models.Model):
     ticket_name = models.CharField(max_length=50, blank=True, null=True)
     ticket_event = models.ForeignKey(Event, related_name='tickets', on_delete=models.CASCADE)
-    ticket_owner = models.ForeignKey(User, related_name='tickets', on_delete=models.CASCADE)
+    ticket_owner = models.ForeignKey(CustomUser, related_name='tickets', on_delete=models.CASCADE)
     date_purchased = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     ticket_number = models.IntegerField(blank=True, null=True)
 
@@ -171,7 +109,7 @@ categorize all events according to organizers
 setup first view for seeing all events.
 create organizer views
 create organizer
-create user roles
+create CustomUser roles
 prepare axios and test api calls
 reset cors allowed origins
 fix new bugs

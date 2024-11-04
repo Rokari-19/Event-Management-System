@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Event, Organizer, Attendee, User
+from .models import Event
 
 # from rest_framework import serializers
 # from .models import CustomUser
@@ -33,30 +33,3 @@ class EventImageSerializer(serializers.ModelSerializer):
             'event_img',
         )
         
-
-class OrganizerSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
-    email = serializers.CharField(source='user.email')
-
-    class Meta:
-        model = Organizer
-        fields = ['id', 'username', 'org_name', 'email']
-        
-        
-class AttendeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Attendee
-        fields = ['username', 'email', 'phone_number', 'address', 'password']
-
-
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create_user(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
