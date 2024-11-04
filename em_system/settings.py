@@ -4,9 +4,9 @@ import datetime
 import environ
 from celery import Celery
 
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
+# import cloudinary
+# import cloudinary.uploader
+# import cloudinary.api
 import cloudinary_storage
 
 env = environ.Env(
@@ -49,19 +49,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig',
-
-    # 'core',
+    # installed apps
+    'core',
+    'accounts',
     'calendarApp',
-    
     # drf apps
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     
     # cloud storage apps
-    'cloudinary',
-    'cloudinary_storage',
+    # 'cloudinary',
+    # 'cloudinary_storage',
 
     # login mamagement
     # 'djoser',
@@ -141,6 +140,8 @@ DATABASES = {
         "PORT": env('PORT')
     }
 }
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -158,6 +159,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+# settings.py
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default backend
+    'accounts.backends.EmailBackend',        # Your custom backend
 ]
 
 
@@ -228,21 +234,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # setting up for cloudinary storage
 
 
-cloudinary.config(
-    cloud_name = env('CLOUDNAME'),
-    api_key = env('APIKEY'),
-    api_secret_key = env('CLOUDSECRET')
-)
+# cloudinary.config(
+#     cloud_name = env('CLOUDNAME'),
+#     api_key = env('APIKEY'),
+#     api_secret_key = env('CLOUDSECRET')
+# )
 
-# MEDIA_URL = env('CLOUDINARY_URL')
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = env('CLOUDINARY_URL')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': env('CLOUDNAME'),
-    'API_KEY': env('APIKEY'),
-    'API_SECRET': env('CLOUDSECRET'),
-    'ALLOWED_FORMATS': ('jpg', 'jpeg', 'png', 'gif', 'pdf'),
-}
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': env('CLOUDNAME'),
+#     'API_KEY': env('APIKEY'),
+#     'API_SECRET': env('CLOUDSECRET'),
+#     'ALLOWED_FORMATS': ('jpg', 'jpeg', 'png', 'gif', 'pdf'),
+# }
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 

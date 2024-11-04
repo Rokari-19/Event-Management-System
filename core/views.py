@@ -1,20 +1,10 @@
 from django.shortcuts import render
 from .models import Event, Organizer  
-from .serializers import EventSerializer, OrganizerSerializer, UserSerializer, EventImageSerializer
+from .serializers import EventSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics, permissions, status
-from .models import User
-from django.views.generic import View
-from django.core.serializers.json import DjangoJSONEncoder
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils.decorators import method_decorator
+from rest_framework import generics, status
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
-from cloudinary.uploader import upload_image as upload
-from rest_framework.parsers import MultiPartParser, FormParser
 
 class AllEvents(APIView):
     def get(self, request, format=None):
@@ -30,33 +20,7 @@ class NewEvent(generics.CreateAPIView):
         if serializer.is_valid():
              serializer.save()
              return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-# class UploadEventImage(generics.RetrieveUpdateDestroyAPIView):
-#     parser_class = (MultiPartParser, FormParser)
-#     serializer_class = EventImageSerializer
-#     permission_classes = [IsAuthenticated]
-    
-#     def get_queryset(self):
-#         event = self.request.event
-#         return Event.objects.filter(id=event.id)
-    
-#     def get_object(self):
-#         queryset = self.get_queryset()
-#         obj = get_object_or_404(queryset, id=self.request.event.id)
-#         return obj
-    
-#     def update(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         file = request.data.get('event_img')
-        
-#         if not file:
-#             return Response({'error': 'no image uploaded'}, status.HTTP_400_BAD_REQUEST)
-        
-#         if instance.event_img:
-#             try:
-#                 delete
-        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
         
 class EventDetailView(generics.RetrieveAPIView):
     queryset = Event.objects.all()
@@ -66,56 +30,6 @@ class EventDetailView(generics.RetrieveAPIView):
         event_id = self.kwargs.get('id')
         return get_object_or_404(Event, id=event_id)
      
-class NewOrganizer(APIView):
-    def post(self, request, format=None):
-        serializer = OrganizerSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
-
-
-class OrganizerEventsList(generics.ListAPIView):
-    serializer_class = EventSerializer
-
-    def get_queryset(self):
-        organizer_name = self.kwargs.get('organizer_name')
-        if organizer_name:
-            organizer = Organizer.objects.get(user__username=organizer_name)
-            return Event.objects.filter(organizer=organizer)
-        return Event.objects.none()
-    
-class OrganizerListView(generics.ListAPIView):
-    queryset = Organizer.objects.all()
-    serializer_class = OrganizerSerializer
-
-class SignupView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-class LoginView(APIView):
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(username=username, password=password)
-        if user:
-            # Get or create the token for the user
-            token, created = Token.objects.get_or_create(user=user)
-            # Return the token in the response
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-
-class UpdateProfileView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-class ForgotPasswordView(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        # Implement logic to send password reset email
-        return Response({'message': 'Password reset email sent'}, status=status.HTTP_200_OK)
 
 '''for use later, incase djoser or simplejwt is needed again'''
 
